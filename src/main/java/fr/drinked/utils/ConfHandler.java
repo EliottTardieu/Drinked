@@ -11,7 +11,7 @@ public class ConfHandler {
 
     static {
         try {
-            InputStream input = new FileInputStream("src/main/resources/fr/drinked/config/config.properties");
+            InputStream input = new FileInputStream("src/main/resources/config/config.properties");
             properties.load(input);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
