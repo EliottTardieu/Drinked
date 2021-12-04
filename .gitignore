@@ -27,3 +27,4 @@ target
 .idea/libraries
 .idea/workspace.xml
 logs
+src/main/resources/fr.drinked/config/conf.properties
