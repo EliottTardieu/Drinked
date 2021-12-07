@@ -44,6 +44,10 @@ public class Logger {
         logger.fine(msg);
     }
 
+    public static void error(String msg, Exception e){ error(msg, e, false); }
+
+    public static void error(String msg, Exception e, boolean quit){ logger.log(Level.SEVERE, msg, e); }
+
     public static void exit(){
         for(Handler h: logger.getHandlers()) {
             h.close();   //must call h.close or a .LCK file will remain.

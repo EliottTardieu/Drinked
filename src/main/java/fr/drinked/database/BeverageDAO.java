@@ -1,32 +1,60 @@
 package fr.drinked.database;
 
-import java.util.List;
-import java.util.Optional;
+import fr.drinked.models.Beverage;
 
-public class BeverageDAO implements DAO {
+import java.util.HashMap;
 
-    @Override
-    public Optional get(long id) {
-        return Optional.empty();
+public class BeverageDAO extends DAO<Beverage> {
+
+    public BeverageDAO() {
+        super(Beverage.class);
     }
 
+    /**
+     * Retourne le nom de la table correspondant a l'objet T
+     *
+     * @return Le nom d'une table SQL
+     */
     @Override
-    public List getAll() {
-        return null;
+    protected String tableName() {
+        return "Beverages";
     }
 
+    /**
+     * Retourne une map associant une colonne SQL a sa valeur dans le cas d'un insert
+     *
+     * @param object Objet a mettre a jour
+     * @return Une Map associant une colonne a sa valeur
+     * @see this.insert
+     * @see this.save
+     */
     @Override
-    public void save(Object o) {
-
+    protected HashMap<String, Object> getInsertMap(Beverage object) {
+        HashMap<String, Object> insertMap = new HashMap<>();
+        insertMap.put("name", object.getName());
+        insertMap.put("description", object.getDescription());
+        insertMap.put("price_35", object.getPrice_35());
+        insertMap.put("price_75", object.getPrice_75());
+        insertMap.put("quantity_available", object.getQuantity_available());
+        return insertMap;
     }
 
+    /**
+     * Retourne une map associant une colonne SQL a sa valeur dans le cas d'un update
+     *
+     * @param object Objet a mettre a jour
+     * @return Une Map associant une colonne a sa valeur
+     * @see this.update
+     * @see this.save
+     */
     @Override
-    public void update(Object o, String[] params) {
-
-    }
-
-    @Override
-    public void delete(Object o) {
-
+    protected HashMap<String, Object> getUpdateMap(Beverage object) {
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("name", object.getName());
+        updateMap.put("description", object.getDescription());
+        updateMap.put("price_35", object.getPrice_35());
+        updateMap.put("price_75", object.getPrice_75());
+        updateMap.put("quantity_available", object.getQuantity_available());
+        return updateMap;
     }
 }
