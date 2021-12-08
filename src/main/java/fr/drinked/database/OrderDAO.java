@@ -31,7 +31,12 @@ public class OrderDAO extends DAO<Order> {
     @Override
     protected HashMap<String, Object> getInsertMap(Order object) {
         HashMap<String, Object> insertMap = new HashMap<>();
-//TODO
+        insertMap.put("beverage_quantity", object.getBeverage_quantity());
+        insertMap.put("sugar_quantity", object.getSugar_quantity());
+        insertMap.put("cup_selection", object.getCup_selection());
+        insertMap.put("price", object.getPrice());
+        insertMap.put("validity", object.getValidity());
+        insertMap.put("beverage_id", object.getBeverage().getId());
         return insertMap;
     }
 
@@ -46,7 +51,12 @@ public class OrderDAO extends DAO<Order> {
     @Override
     protected HashMap<String, Object> getUpdateMap(Order object) {
         HashMap<String, Object> updateMap = new HashMap<>();
-//TODO
+        updateMap.put("beverage_quantity", object.getBeverage_quantity());
+        updateMap.put("sugar_quantity", object.getSugar_quantity());
+        updateMap.put("cup_selection", object.getCup_selection());
+        updateMap.put("price", object.getPrice());
+        updateMap.put("validity", object.getValidity());
+        updateMap.put("beverage_id", object.getBeverage().getId());
         return updateMap;
     }
 }
