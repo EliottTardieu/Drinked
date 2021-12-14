@@ -23,11 +23,11 @@ public class App extends Application {
     public static App instance;
 
     @Getter
-    private static final OrderDAO orderDAO = new OrderDAO();
+    private final OrderDAO orderDAO = new OrderDAO();
     @Getter
-    private static final ResourceDAO resourceDAO = new ResourceDAO();
+    private final ResourceDAO resourceDAO = new ResourceDAO();
     @Getter
-    private static final BeverageDAO beverageDAO = new BeverageDAO();
+    private final BeverageDAO beverageDAO = new BeverageDAO();
 
     @Override
     public void start(Stage stage) throws IOException {

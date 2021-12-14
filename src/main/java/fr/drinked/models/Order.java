@@ -36,7 +36,7 @@ public class Order extends Model {
     protected void hydrate(HashMap<String, Object> data) {
         this.setId(integer(data.get("id")));
         this.setBeverage_quantity(integer(data.get("beverage_quantity")));
-        this.setBeverage(App.getBeverageDAO().findById(integer(data.get("beverage_id"))));
+        this.setBeverage(App.getInstance().getBeverageDAO().findById(integer(data.get("beverage_id"))));
         this.setSugar_quantity(integer(data.get("sugar_quantity")));
         this.setCup_selection(string(data.get("cup_selection")));
         this.setPrice(floatNumber(data.get("price")));

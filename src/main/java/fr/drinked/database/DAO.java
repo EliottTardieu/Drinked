@@ -17,7 +17,6 @@ public abstract class DAO<T extends Model> {
     private static String HOST = "jdbc:mysql://localhost:3306/drinked";
     private static String USER;
     private static String PASSWORD;
-    public static boolean DEV;
 
     protected Connection connection;
     private Class<T> type;
@@ -25,6 +24,7 @@ public abstract class DAO<T extends Model> {
     public DAO(Class<T> type){
         try {
             this.type = type;
+            DAO.loadProperties();
             this.connection = DriverManager.getConnection(HOST, USER, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,8 +37,6 @@ public abstract class DAO<T extends Model> {
             properties.load(inputStream);
             USER = properties.getProperty("db.user");
             PASSWORD = properties.getProperty("db.password");
-            DEV = Boolean.parseBoolean(properties.getProperty("global.dev"));
-            HOST = HOST.replace("%host%", properties.getProperty("db.host", "localhost"));
             return properties;
         } catch (FileNotFoundException e) {
             Logger.error("Unable to find config.properties", e);
