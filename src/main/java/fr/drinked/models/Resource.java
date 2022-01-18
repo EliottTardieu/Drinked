@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 
+//TODO Do controllers for each Model
 public class Resource extends Model {
 
     @Getter @Setter

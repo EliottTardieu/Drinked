@@ -1,5 +1,6 @@
 package fr.drinked.models;
 
+import fr.drinked.utils.Logger;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -37,5 +38,16 @@ public class Beverage extends Model {
         this.setPrice_35(floatNumber(data.get("price_35")));
         this.setPrice_75(floatNumber(data.get("price_75")));
         this.setQuantity_available(integer(data.get("quantity_available")));
+    }
+
+    public float getPrice(int quantity) {
+        if (quantity == 35) {
+            return price_35;
+        } else if (quantity == 75) {
+            return price_75;
+        } else {
+            Logger.severe("Wrong quantity.");
+            return 0;
+        }
     }
 }

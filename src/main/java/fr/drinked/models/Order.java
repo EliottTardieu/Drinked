@@ -21,6 +21,18 @@ public class Order extends Model {
     @Getter @Setter
     private String validity;
 
+    @Getter
+    private static final String CUP_75 = "Cup 75cl";
+    @Getter
+    private static final String CUP_35 = "Cup 35cl";
+    @Getter
+    private static final String NO_CUP = "Personal Cup";
+
+    @Getter
+    private static final String CANCELED = "Canceled";
+    @Getter
+    private static final String VALIDATED = "Validated";
+
     public Order() { super(); }
 
     public Order(HashMap<String, Object> data){

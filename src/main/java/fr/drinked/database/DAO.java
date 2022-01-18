@@ -14,7 +14,7 @@ import java.util.*;
 
 public abstract class DAO<T extends Model> {
 
-    private static String HOST = "jdbc:mysql://localhost:3306/drinked";
+    private static String HOST = "jdbc:mysql://localhost:3306/drinked?useSSL=false";
     private static String USER;
     private static String PASSWORD;
 
