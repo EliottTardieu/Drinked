@@ -25,6 +25,14 @@ public class Beverage extends Model {
         super(data);
     }
 
+    public Beverage(String name, String description, float price_35, float price_75, int quantity_available) {
+        this.name = name;
+        this.description = description;
+        this.price_35 = price_35;
+        this.price_75 = price_75;
+        this.quantity_available = quantity_available;
+    }
+
     /**
      * Hydrate un objet en fonction d'un résult set SQL
      *

@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import java.util.HashMap;
 
-//TODO Do controllers for each Model
 public class Resource extends Model {
 
     @Getter @Setter
@@ -17,6 +16,11 @@ public class Resource extends Model {
 
     public Resource(HashMap<String, Object> data){
         super(data);
+    }
+
+    public Resource(String description, int quantity_available) {
+        this.description = description;
+        this.quantity_available = quantity_available;
     }
 
     /**

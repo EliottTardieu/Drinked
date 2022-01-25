@@ -39,6 +39,15 @@ public class Order extends Model {
         super(data);
     }
 
+    public Order(Beverage beverage, int beverage_quantity, int sugar_quantity, String cup_selection, float price, String validity) {
+        this.beverage = beverage;
+        this.beverage_quantity = beverage_quantity;
+        this.sugar_quantity = sugar_quantity;
+        this.cup_selection = cup_selection;
+        this.price = price;
+        this.validity = validity;
+    }
+
     /**
      * Hydrate un objet en fonction d'un résult set SQL
      *

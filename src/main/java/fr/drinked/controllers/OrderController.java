@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
@@ -129,6 +130,7 @@ public class OrderController implements Initializable {
     }
 
     public void calculatePrice(Beverage beverage) {
+        DecimalFormat df = new DecimalFormat("0.00");
         float price = 0;
         this.order.setCup_selection(Order.getNO_CUP());
         if (this.chopQuantity() == 35) {
