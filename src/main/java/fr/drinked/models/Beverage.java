@@ -18,6 +18,8 @@ public class Beverage extends Model {
     private float price_75;
     @Getter @Setter
     private int quantity_available;
+    @Getter @Setter
+    private float water_percentage;
 
     public Beverage() { super(); }
 
@@ -25,12 +27,13 @@ public class Beverage extends Model {
         super(data);
     }
 
-    public Beverage(String name, String description, float price_35, float price_75, int quantity_available) {
+    public Beverage(String name, String description, float price_35, float price_75, int quantity_available, float water_percentage) {
         this.name = name;
         this.description = description;
         this.price_35 = price_35;
         this.price_75 = price_75;
         this.quantity_available = quantity_available;
+        this.water_percentage = water_percentage;
     }
 
     /**
@@ -46,6 +49,7 @@ public class Beverage extends Model {
         this.setPrice_35(floatNumber(data.get("price_35")));
         this.setPrice_75(floatNumber(data.get("price_75")));
         this.setQuantity_available(integer(data.get("quantity_available")));
+        this.setWater_percentage(floatNumber(data.get("water_percentage")));
     }
 
     public float getPrice(int quantity) {

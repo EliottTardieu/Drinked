@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public class TestBeverage {
 
-    private Beverage awaitedModify = new Beverage("EspressoTest", "Long", 0.70f, 1.0f, 100);
+    private Beverage awaitedModify = new Beverage("EspressoTest", "Long", 0.70f, 1.0f, 100, 80);
     private String backupName;
     private String backupDescription;
     private float backupPrice_35;

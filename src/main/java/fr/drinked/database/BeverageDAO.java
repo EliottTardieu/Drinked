@@ -36,6 +36,7 @@ public class BeverageDAO extends DAO<Beverage> {
         insertMap.put("price_35", object.getPrice_35());
         insertMap.put("price_75", object.getPrice_75());
         insertMap.put("quantity_available", object.getQuantity_available());
+        insertMap.put("water_percentage", object.getWater_percentage());
         return insertMap;
     }
 
@@ -55,6 +56,7 @@ public class BeverageDAO extends DAO<Beverage> {
         updateMap.put("price_35", object.getPrice_35());
         updateMap.put("price_75", object.getPrice_75());
         updateMap.put("quantity_available", object.getQuantity_available());
+        updateMap.put("water_percentage", object.getWater_percentage());
         return updateMap;
     }
 }

@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestBeverageModel {
 
-    Beverage beverage = new Beverage("Ristretto", "Short", 0.3f, 1.0f, 50);
+    Beverage beverage = new Beverage("Ristretto", "Short", 0.3f, 1.0f, 50, 80);
 
     @Test
     public void getNameTest() {
