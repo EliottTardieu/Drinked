@@ -17,19 +17,15 @@ public class ConfirmationController {
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
         App.getInstance().getLayoutController().getOrderController().getOrder().setValidity(Order.getCANCELED());
         this.updateDAO(false);
-        //TODO Clean reset (unselect everything / reselect)
-        App.getInstance().getLayoutController().getOrderController().setOrder(new Order());
+        App.getInstance().getLayoutController().getOrderController().reset();
         stage.close();
     }
 
-    //TODO Bind to button, should update DB with updated values for resources & beverages
-    //ResourceDAO.save(resource) pour chaque ressource / BeverageDAO.save(beverage) pour la boisson / OrderDAO.save(order) pour la commande
     public void confirm(ActionEvent actionEvent) {
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
         App.getInstance().getLayoutController().getOrderController().getOrder().setValidity(Order.getVALIDATED());
         this.updateDAO(true);
-        //TODO Clean reset (unselect everything / reselect)
-        App.getInstance().getLayoutController().getOrderController().setOrder(new Order());
+        App.getInstance().getLayoutController().getOrderController().reset();
         stage.close();
     }
 
@@ -46,15 +42,16 @@ public class ConfirmationController {
             Resource sugar = App.getInstance().getResourceDAO().findById(2);
             sugar.setQuantity_available(sugar.getQuantity_available() - order.getSugar_quantity());
             App.getInstance().getResourceDAO().save(sugar);
-            Resource cup;
-            if (order.getBeverage_quantity() == 35) {
-                cup = App.getInstance().getResourceDAO().findById(3);
-            } else {
-                cup = App.getInstance().getResourceDAO().findById(4);
+            if(!order.getCup_selection().equals(Order.getNO_CUP())) {
+                Resource cup;
+                if (order.getBeverage_quantity() == 35) {
+                    cup = App.getInstance().getResourceDAO().findById(3);
+                } else {
+                    cup = App.getInstance().getResourceDAO().findById(4);
+                }
+                cup.setQuantity_available(cup.getQuantity_available() - 1);
+                App.getInstance().getResourceDAO().save(cup);
             }
-            cup.setQuantity_available(cup.getQuantity_available() - 1);
-            App.getInstance().getResourceDAO().save(cup);
-
             // To save the beverage
             Beverage beverage = order.getBeverage();
             beverage.setQuantity_available(beverage.getQuantity_available() - order.getBeverage_quantity());
