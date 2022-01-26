@@ -117,7 +117,7 @@ public class OrderController implements Initializable {
         Stage stage = new Stage();
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/views/confirmation.fxml")));
         stage.setScene(new Scene(root));
-        stage.setTitle("My modal window");
+        stage.setTitle("Confirmation window");
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(((Node)event.getSource()).getScene().getWindow());
         stage.show();
@@ -130,19 +130,20 @@ public class OrderController implements Initializable {
     }
 
     public void calculatePrice(Beverage beverage) {
-        DecimalFormat df = new DecimalFormat("0.00");
         float price = 0;
         this.order.setCup_selection(Order.getNO_CUP());
         if (this.chopQuantity() == 35) {
             price += beverage.getPrice(35);
             if (checkboxCup.isSelected()) {
                 price -= 0.1f;
+            } else {
                 this.order.setCup_selection(Order.getCUP_35());
             }
         } else if (this.chopQuantity() == 75) {
             price += beverage.getPrice(75);
             if (checkboxCup.isSelected()) {
                 price -= 0.15f;
+            } else {
                 this.order.setCup_selection(Order.getCUP_75());
             }
         }
