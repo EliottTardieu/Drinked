@@ -36,7 +36,7 @@ public class Resource extends Model<Resource> {
     }
 
     @Override
-    protected boolean compare(Resource model) {
+    public boolean compare(Resource model) {
         if(this.getQuantity_available() != model.getQuantity_available()) return false;
         if(!this.getDescription().equals(model.getDescription())) return false;
         return true;

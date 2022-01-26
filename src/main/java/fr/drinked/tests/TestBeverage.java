@@ -35,16 +35,7 @@ public class TestBeverage {
         criteriasTest.put("Name", "EspressoTest");
         criteriasTest.put("Description", "Long");
         Beverage newEspressoBeverage = App.getInstance().getBeverageDAO().find(criteriasTest);
-        if (newEspressoBeverage.getName().equals(espressoBeverage.getName())
-                && newEspressoBeverage.getName().equals(awaitedModify.getName())
-                && newEspressoBeverage.getDescription().equals(espressoBeverage.getDescription())
-                && newEspressoBeverage.getDescription().equals(awaitedModify.getDescription())
-                && newEspressoBeverage.getPrice_35() == espressoBeverage.getPrice_35()
-                && newEspressoBeverage.getPrice_35() == awaitedModify.getPrice_35()
-                && newEspressoBeverage.getPrice_75() == espressoBeverage.getPrice_75()
-                && newEspressoBeverage.getPrice_75() == awaitedModify.getPrice_75()
-                && newEspressoBeverage.getQuantity_available() == espressoBeverage.getQuantity_available()
-                && newEspressoBeverage.getQuantity_available() == awaitedModify.getQuantity_available()) {
+        if (newEspressoBeverage.compare(espressoBeverage) && newEspressoBeverage.compare(awaitedModify)) {
             Logger.fine("BeverageDAO fine");
             this.reset(newEspressoBeverage);
             return true;

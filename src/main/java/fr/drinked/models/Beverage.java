@@ -37,7 +37,7 @@ public class Beverage extends Model<Beverage> {
     }
 
     /**
-     * Hydrate un objet en fonction d'un résult set SQL
+     * Hydrate un objet en fonction d'un résultat set SQL
      *
      * @param data Map associant une colonne a sa valeur
      */
@@ -53,7 +53,7 @@ public class Beverage extends Model<Beverage> {
     }
 
     @Override
-    protected boolean compare(Beverage model) {
+    public boolean compare(Beverage model) {
         if(this.getWater_percentage() != model.getWater_percentage()) return false;
         if(this.getPrice_35() != model.getPrice_35()) return false;
         if(this.getPrice_75() != model.getPrice_75()) return false;

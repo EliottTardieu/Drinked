@@ -63,4 +63,15 @@ public class TestBeverageModel {
         beverage.setQuantity_available(100);
         assertEquals(beverage.getQuantity_available(), 100);
     }
+
+    @Test
+    public void getWaterPercentageTest() {
+        assertEquals(beverage.getWater_percentage(), 80);
+    }
+
+    @Test
+    public void setWaterPercentageTest() {
+        beverage.setWater_percentage(90);
+        assertEquals(beverage.getWater_percentage(), 90);
+    }
 }

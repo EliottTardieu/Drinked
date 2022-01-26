@@ -24,10 +24,7 @@ public class TestResource {
         HashMap<String, Object> criteriaTest = new HashMap<>();
         criteriaTest.put("description", "SugarTest");
         Resource newSugarResource = App.getInstance().getResourceDAO().find(criteriaTest);
-        if (newSugarResource.getQuantity_available() == sugarResource.getQuantity_available()
-                && newSugarResource.getQuantity_available() == awaitedModify.getQuantity_available()
-                && newSugarResource.getDescription().equals(sugarResource.getDescription())
-                && newSugarResource.getDescription().equals(awaitedModify.getDescription())) {
+        if (newSugarResource.compare(sugarResource) && newSugarResource.compare(awaitedModify)) {
             Logger.fine("ResourceDAO fine");
             this.reset(newSugarResource);
             return true;

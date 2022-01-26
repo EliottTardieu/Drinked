@@ -65,13 +65,13 @@ public class Order extends Model<Order> {
     }
 
     @Override
-    protected boolean compare(Order model) {
-        if(this.getBeverage() != model.getBeverage()) return false;
+    public boolean compare(Order model) {
+        if(this.getBeverage().getId() != model.getBeverage().getId()) return false;
         if(this.getBeverage_quantity() != model.getBeverage_quantity()) return false;
         if(this.getSugar_quantity() != model.getSugar_quantity()) return false;
-        if(this.getCup_selection() != model.getCup_selection()) return false;
+        if(!this.getCup_selection().equals(model.getCup_selection())) return false;
         if(this.getPrice() != model.getPrice()) return false;
-        if(this.getValidity() != model.getValidity()) return false;
+        if(!this.getValidity().equals(model.getValidity())) return false;
         return true;
     }
 }

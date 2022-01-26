@@ -1,7 +1,6 @@
 package fr.drinked.database;
 
 import fr.drinked.models.Beverage;
-
 import java.util.HashMap;
 
 public class BeverageDAO extends DAO<Beverage> {

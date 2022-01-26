@@ -15,7 +15,7 @@ public class Component {
     public static void runTest(String... args) {
         testPassing = new TestResource().run();
         testPassing = new TestBeverage().run();
-        //testPassing = new TestOrder().run();
+        testPassing = new TestOrder().run();
 
         if (testPassing) {
             System.out.println("OK");

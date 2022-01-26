@@ -127,11 +127,12 @@ public abstract class DAO<T extends Model> {
 
     /**
      * Retire l'objet de la base de donnée
-     * @param object Objet a détruire
+     * @param object Objet à détruire
      */
     public void delete(T object){
         try {
             rawQuery("DELETE FROM " + tableName() + " WHERE id="+formatVariable(object.getId()));
+            object.setId(-1);
         } catch (SQLException e) {
             Logger.warning("Unable to delete on " + tableName() + " where id=" + object.getId());
         }
