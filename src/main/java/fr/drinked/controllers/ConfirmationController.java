@@ -16,7 +16,7 @@ public class ConfirmationController {
     public void cancel(ActionEvent actionEvent) {
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
         App.getInstance().getLayoutController().getOrderController().getOrder().setValidity(Order.getCANCELED());
-        App.getInstance().getOrderDAO().save(App.getInstance().getLayoutController().getOrderController().getOrder());
+        this.updateDAO(false);
         //TODO Clean reset (unselect everything / reselect)
         App.getInstance().getLayoutController().getOrderController().setOrder(new Order());
         stage.close();
@@ -27,7 +27,7 @@ public class ConfirmationController {
     public void confirm(ActionEvent actionEvent) {
         Stage stage = (Stage)((Node) actionEvent.getSource()).getScene().getWindow();
         App.getInstance().getLayoutController().getOrderController().getOrder().setValidity(Order.getVALIDATED());
-        this.updateDAO();
+        this.updateDAO(true);
         //TODO Clean reset (unselect everything / reselect)
         App.getInstance().getLayoutController().getOrderController().setOrder(new Order());
         stage.close();
@@ -37,6 +37,7 @@ public class ConfirmationController {
         // To save the order
         Order order = App.getInstance().getLayoutController().getOrderController().getOrder();
         App.getInstance().getOrderDAO().save(order);
+
         if(status) {
             // To save the resources
             Resource water = App.getInstance().getResourceDAO().findById(1);
