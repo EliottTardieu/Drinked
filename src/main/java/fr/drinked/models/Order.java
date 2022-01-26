@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 
-public class Order extends Model {
+public class Order extends Model<Order> {
 
     @Getter @Setter
     private int beverage_quantity;
@@ -62,5 +62,16 @@ public class Order extends Model {
         this.setCup_selection(string(data.get("cup_selection")));
         this.setPrice(floatNumber(data.get("price")));
         this.setValidity(string(data.get("validity")));
+    }
+
+    @Override
+    protected boolean compare(Order model) {
+        if(this.getBeverage() != model.getBeverage()) return false;
+        if(this.getBeverage_quantity() != model.getBeverage_quantity()) return false;
+        if(this.getSugar_quantity() != model.getSugar_quantity()) return false;
+        if(this.getCup_selection() != model.getCup_selection()) return false;
+        if(this.getPrice() != model.getPrice()) return false;
+        if(this.getValidity() != model.getValidity()) return false;
+        return true;
     }
 }

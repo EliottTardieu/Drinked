@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 
-public class Beverage extends Model {
+public class Beverage extends Model<Beverage> {
 
     @Getter @Setter
     private String name;
@@ -50,6 +50,17 @@ public class Beverage extends Model {
         this.setPrice_75(floatNumber(data.get("price_75")));
         this.setQuantity_available(integer(data.get("quantity_available")));
         this.setWater_percentage(floatNumber(data.get("water_percentage")));
+    }
+
+    @Override
+    protected boolean compare(Beverage model) {
+        if(this.getWater_percentage() != model.getWater_percentage()) return false;
+        if(this.getPrice_35() != model.getPrice_35()) return false;
+        if(this.getPrice_75() != model.getPrice_75()) return false;
+        if(!this.getName().equals(model.getName())) return false;
+        if(!this.getDescription().equals(model.getDescription())) return false;
+        if(this.getQuantity_available() != model.getQuantity_available()) return false;
+        return true;
     }
 
     public float getPrice(int quantity) {

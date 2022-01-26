@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.UUID;
 
-public abstract class Model {
+public abstract class Model<T extends Model> {
 
     protected int id = -1;
 
@@ -30,6 +30,8 @@ public abstract class Model {
      * @param data Map associant une colonne a sa valeur
      */
     protected abstract void hydrate(HashMap<String,Object> data);
+
+    protected abstract boolean compare(T model);
 
     public boolean exist(){
         return this.id > 0;

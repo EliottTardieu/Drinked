@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 
-public class Resource extends Model {
+public class Resource extends Model<Resource> {
 
     @Getter @Setter
     private String description;
@@ -33,5 +33,12 @@ public class Resource extends Model {
         this.setId(integer(data.get("id")));
         this.setDescription(string(data.get("description")));
         this.setQuantity_available(integer(data.get("quantity_available")));
+    }
+
+    @Override
+    protected boolean compare(Resource model) {
+        if(this.getQuantity_available() != model.getQuantity_available()) return false;
+        if(!this.getDescription().equals(model.getDescription())) return false;
+        return true;
     }
 }
