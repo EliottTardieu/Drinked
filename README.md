@@ -1,7 +1,7 @@
 # Drinked, THE way to drink.
 
 ### Database Setup
-Here we is the procedure to follow in order to install the database. All commands are meant to be run in bash.
+Here we have the procedure to follow in order to install the database. All commands are meant to be run in bash.
 
 <ol>
     <li>You must log in your mysql server using "mysql -u username -p".</li>

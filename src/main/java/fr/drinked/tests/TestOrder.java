@@ -4,8 +4,6 @@ import fr.drinked.App;
 import fr.drinked.models.Beverage;
 import fr.drinked.models.Order;
 import fr.drinked.utils.Logger;
-import org.mockito.Mockito;
-
 import java.util.HashMap;
 
 public class TestOrder {
