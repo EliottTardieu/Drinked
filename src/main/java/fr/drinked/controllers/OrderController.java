@@ -5,8 +5,7 @@ import fr.drinked.models.Beverage;
 import fr.drinked.models.Order;
 import fr.drinked.models.Resource;
 import fr.drinked.utils.Logger;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -52,23 +51,28 @@ public class OrderController implements Initializable {
 
     private boolean confirmable = false;
 
-    @Override @SuppressWarnings("all")
+    @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.order = new Order();
 
         ObservableList<Beverage> obsList = FXCollections.observableArrayList(App.getInstance().getBeverageDAO().getAll());
         listBeverages.setItems(obsList);
 
-        listBeverages.setCellFactory(new Callback<ListView<Beverage>, ListCell<Beverage>>() {
+        listBeverages.setCellFactory(new Callback<>() {
             @Override
             public ListCell<Beverage> call(ListView<Beverage> lv) {
-                return new ListCell<Beverage>() {
+                return new ListCell<>() {
                     @Override
                     public void updateItem(Beverage item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null
-                                || item.getQuantity_available() <= App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()
-                                || App.getInstance().getResourceDAO().findById(1).getQuantity_available() <= item.getWater_percentage()/100 * App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()) {
+                                || (item.getQuantity_available() < 35)
+                                || ((item.getWater_percentage() / 100 * 35) > App.getInstance().getResourceDAO().findById(1).getQuantity_available())) {
+                            Platform.runLater(() -> {
+                                listBeverages.getItems().remove(item);
+                                if(listBeverages.getItems().size() == 0)
+                                    errorLabel.setText("No beverage available.");
+                            });
                             setText(null);
                         } else {
                             setText(item.getName());
@@ -78,26 +82,20 @@ public class OrderController implements Initializable {
             }
         });
 
-        if(listBeverages.getItems().size() == 0)
-            errorLabel.setText("No beverage available.");
-
-        listBeverages.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Beverage>() {
-            @Override @SuppressWarnings("all")
-            public void changed(ObservableValue<? extends Beverage> observable, Beverage oldValue, Beverage newValue) {
-                if(newValue != null) {
-                    if (newValue.getQuantity_available() >= App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()
-                            && App.getInstance().getResourceDAO().findById(1).getQuantity_available() >= newValue.getWater_percentage() / 100 * App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()) {
-                        App.getInstance().getLayoutController().getOrderController().updateOrder(newValue);
-                        confirmable = true;
-                    } else {
-                        confirmable = false;
-                        App.getInstance().getLayoutController().getOrderController().updateOrder(null);
-                        errorLabel.setText("Not enough Water or Beverage.");
-                        listBeverages.getItems().remove(newValue);
-                    }
+        listBeverages.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                if(order.getBeverage_quantity() <= newValue.getQuantity_available()
+                        && App.getInstance().getResourceDAO().findById(1).getQuantity_available() >= newValue.getWater_percentage()/100 * order.getBeverage_quantity()) {
+                    App.getInstance().getLayoutController().getOrderController().updateOrder(newValue);
+                    confirmable = true;
+                    updateErrorMessage(0);
                 } else {
-                    Logger.warning("Cleared beverage selection.");
+                    confirmable = false;
+                    App.getInstance().getLayoutController().getOrderController().updateOrder(null);
+                    updateErrorMessage(1, order.getBeverage_quantity());
                 }
+            } else {
+                Logger.warning("Cleared beverage selection.");
             }
         });
 
@@ -105,12 +103,13 @@ public class OrderController implements Initializable {
         choiceQuantity.getItems().add("75cl");
 
         choiceQuantity.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-            if(this.chopQuantity() > this.order.getBeverage().getQuantity_available()) {
-                errorLabel.setText("Not enough beverage available");
-                choiceQuantity.setValue("35cl");
+            if(this.chopQuantity(newValue) > this.order.getBeverage().getQuantity_available()
+                    || App.getInstance().getResourceDAO().findById(1).getQuantity_available() < this.chopQuantity(newValue) * this.order.getBeverage().getWater_percentage()/100) {
+                updateErrorMessage(1, 75);
+                choiceQuantity.getSelectionModel().selectFirst();
                 this.order.setBeverage_quantity(35);
             } else {
-                this.order.setBeverage_quantity(this.chopQuantity());
+                this.order.setBeverage_quantity(this.chopQuantity(newValue));
                 this.updateOrder(this.order.getBeverage());
             }
         });
@@ -124,27 +123,24 @@ public class OrderController implements Initializable {
             } else {
                 sliderSugar.setValue(oldVal.intValue());
                 lblSugar.setText(oldVal.intValue() + "g");
-                errorLabel.setText("Not enough Sugar.");
+                updateErrorMessage(2);
             }
         });
 
-        checkboxCup.selectedProperty().addListener(new ChangeListener<Boolean>() {
-            @Override @SuppressWarnings("all")
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                int quantity = order == null ? 35 : order.getBeverage_quantity();
-                Resource cup;
-                if (quantity == 35) {
-                    cup = App.getInstance().getResourceDAO().findById(3);
-                } else {
-                    cup = App.getInstance().getResourceDAO().findById(4);
-                }
-                if(cup.getQuantity_available() >= 1) {
-                    App.getInstance().getLayoutController().getOrderController().setCupSelection(newValue);
-                    App.getInstance().getLayoutController().getOrderController().updateOrder(App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage());
-                } else {
-                    setCupSelection(true);
-                    errorLabel.setText("No more cup for "+quantity+"cl.");
-                }
+        checkboxCup.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            int quantity = order == null ? 35 : order.getBeverage_quantity();
+            Resource cup;
+            if (quantity == 35) {
+                cup = App.getInstance().getResourceDAO().findById(3);
+            } else {
+                cup = App.getInstance().getResourceDAO().findById(4);
+            }
+            if (cup.getQuantity_available() >= 1) {
+                setCupSelection(newValue);
+                updateOrder(order.getBeverage());
+            } else {
+                setCupSelection(true);
+                updateErrorMessage(4, quantity);
             }
         });
 
@@ -152,7 +148,7 @@ public class OrderController implements Initializable {
     }
 
     private void init() {
-        choiceQuantity.setValue("35cl");
+        choiceQuantity.getSelectionModel().selectFirst();
         this.order.setBeverage_quantity(35);
         this.setCupSelection(true);
         sliderSugar.setValue(0);
@@ -160,10 +156,6 @@ public class OrderController implements Initializable {
     }
 
     public void reset() {
-        if(order.getBeverage().getQuantity_available() < 35
-                || App.getInstance().getResourceDAO().findById(1).getQuantity_available() < order.getBeverage().getWater_percentage() / 100 * App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()) {
-            listBeverages.getItems().remove(order.getBeverage());
-        }
         confirmable = false;
         this.order = new Order();
         this.init();
@@ -183,16 +175,39 @@ public class OrderController implements Initializable {
             stage.initOwner(((Node) event.getSource()).getScene().getWindow());
             stage.show();
         } else {
-            errorLabel.setText("Can't confirm invalid order.");
+            updateErrorMessage(3);
         }
     }
 
-    public void updateOrder(Beverage beverage) {
+    private void updateErrorMessage(int type, int... quantity){
+        switch (type) {
+            case 1:
+                if(quantity.length != 0)
+                    errorLabel.setText("Not enough beverage for "+quantity[0]+"cl.");
+                else
+                    errorLabel.setText("Not enough beverage.");
+                break;
+            case 2:
+                errorLabel.setText("Not enough Sugar.");
+                break;
+            case 3:
+                errorLabel.setText("Can't confirm invalid order.");
+                break;
+            case 4:
+                errorLabel.setText("No more cup for "+quantity[0]+"cl.");
+                break;
+            default:
+                errorLabel.setText("");
+                break;
+        }
+    }
+
+    private void updateOrder(Beverage beverage) {
         float price = 0;
         if(beverage != null)
             this.order.setBeverage(beverage);
         this.order.setCup_selection(Order.getNO_CUP());
-        if (this.chopQuantity() == 35) {
+        if (this.order.getBeverage_quantity() == 35) {
             if(beverage != null)
                 price += beverage.getPrice(35);
             if (checkboxCup.isSelected()) {
@@ -201,7 +216,7 @@ public class OrderController implements Initializable {
                 if(App.getInstance().getResourceDAO().findById(3).getQuantity_available() >= 1)
                     this.order.setCup_selection(Order.getCUP_35());
             }
-        } else if (this.chopQuantity() == 75) {
+        } else if (this.order.getBeverage_quantity() == 75) {
             if(beverage != null)
                 price += beverage.getPrice(75);
             if (checkboxCup.isSelected()) {
@@ -215,10 +230,8 @@ public class OrderController implements Initializable {
         this.lblPrice.setText(String.valueOf(this.order.getPrice()));
     }
 
-    public int chopQuantity() {
-        String val = StringUtils.chop(choiceQuantity.getValue());
-        val = StringUtils.chop(val);
-        return Integer.parseInt(val);
+    public int chopQuantity(String quantity) {
+        return Integer.parseInt(StringUtils.chop(StringUtils.chop(quantity)));
     }
 
     public void setCupSelection(boolean personalCup) {
