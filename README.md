@@ -11,6 +11,8 @@ Here we is the procedure to follow in order to install the database. All command
 </ol>
 You have now imported successfully the drinked database, with already existing examples in it.
 
+If you want to reset data to the original examples, you can remove all your data and import drinked_data.sql in your database.
+
 ##### Now to get your drinkedDB to work:
 
 <ol>

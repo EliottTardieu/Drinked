@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : localhost:3306
--- Généré le : sam. 04 déc. 2021 à 10:49
+-- Généré le : jeu. 27 jan. 2022 à 18:19
 -- Version du serveur :  8.0.27-0ubuntu0.20.04.1
--- Version de PHP : 7.3.33-1+ubuntu20.04.1+deb.sury.org+1
+-- Version de PHP : 7.4.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -34,16 +34,19 @@ CREATE TABLE `Beverages` (
   `description` varchar(256) DEFAULT NULL,
   `price_35` float DEFAULT NULL,
   `price_75` float DEFAULT NULL,
-  `quantity_available` int DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `quantity_available` int DEFAULT NULL,
+  `water_percentage` float DEFAULT '80'
+) ;
 
 --
 -- Déchargement des données de la table `Beverages`
 --
 
-INSERT INTO `Beverages` (`id`, `name`, `description`, `price_35`, `price_75`, `quantity_available`) VALUES
-(1, 'Coca', 'Cola', 3, 6, 15),
-(2, 'Ice Tea', 'Orange', 2, 5, 10);
+INSERT INTO `Beverages` (`id`, `name`, `description`, `price_35`, `price_75`, `quantity_available`, `water_percentage`) VALUES
+(1, 'Espresso', 'Short', 0.8, 1.2, 50, 80),
+(2, 'Cappuccino', 'Long', 1.2, 2, 70, 80),
+(3, 'Macchiato', 'Classic', 1.5, 2.5, 65, 80),
+(4, 'Latte Macchiato', 'Latte', 2, 3, 100, 80);
 
 -- --------------------------------------------------------
 
@@ -66,8 +69,10 @@ CREATE TABLE `Orders` (
 --
 
 INSERT INTO `Orders` (`id`, `beverage_quantity`, `beverage_id`, `sugar_quantity`, `cup_selection`, `price`, `validity`) VALUES
-(1, 35, 1, 10, 'Personal Cup', 2.9, 'Done'),
-(2, 75, 2, 0, 'Cup 75cl', 5, 'Canceled');
+(1, 35, 2, 5, 'Personal Cup', 1.2, 'Validated'),
+(2, 75, 4, 10, 'Cup 75cl', 2.85, 'Validated'),
+(3, 35, 2, 5, 'Personal Cup', 1.2, 'Canceled'),
+(4, 75, 2, 0, 'Personal Cup', 2, 'Validated');
 
 -- --------------------------------------------------------
 
@@ -122,13 +127,13 @@ ALTER TABLE `Resources`
 -- AUTO_INCREMENT pour la table `Beverages`
 --
 ALTER TABLE `Beverages`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT pour la table `Orders`
 --
 ALTER TABLE `Orders`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT pour la table `Resources`

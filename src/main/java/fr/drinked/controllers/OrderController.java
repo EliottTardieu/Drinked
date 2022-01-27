@@ -69,7 +69,7 @@ public class OrderController implements Initializable {
                         if (item == null
                                 || item.getQuantity_available() <= App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()
                                 || App.getInstance().getResourceDAO().findById(1).getQuantity_available() <= item.getWater_percentage()/100 * App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()) {
-                            listBeverages.getItems().remove(item);
+                            setText(null);
                         } else {
                             setText(item.getName());
                         }
@@ -93,6 +93,7 @@ public class OrderController implements Initializable {
                         confirmable = false;
                         App.getInstance().getLayoutController().getOrderController().updateOrder(null);
                         errorLabel.setText("Not enough Water or Beverage.");
+                        listBeverages.getItems().remove(newValue);
                     }
                 } else {
                     Logger.warning("Cleared beverage selection.");
@@ -104,8 +105,14 @@ public class OrderController implements Initializable {
         choiceQuantity.getItems().add("75cl");
 
         choiceQuantity.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-            this.order.setBeverage_quantity(this.chopQuantity());
-            this.updateOrder(this.order.getBeverage());
+            if(this.chopQuantity() > this.order.getBeverage().getQuantity_available()) {
+                errorLabel.setText("Not enough beverage available");
+                choiceQuantity.setValue("35cl");
+                this.order.setBeverage_quantity(35);
+            } else {
+                this.order.setBeverage_quantity(this.chopQuantity());
+                this.updateOrder(this.order.getBeverage());
+            }
         });
 
         sliderSugar.valueProperty().addListener((obs, oldVal, newVal) -> {
@@ -144,6 +151,26 @@ public class OrderController implements Initializable {
         this.init();
     }
 
+    private void init() {
+        choiceQuantity.setValue("35cl");
+        this.order.setBeverage_quantity(35);
+        this.setCupSelection(true);
+        sliderSugar.setValue(0);
+        lblSugar.setText("0g");
+    }
+
+    public void reset() {
+        if(order.getBeverage().getQuantity_available() < 35
+                || App.getInstance().getResourceDAO().findById(1).getQuantity_available() < order.getBeverage().getWater_percentage() / 100 * App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage_quantity()) {
+            listBeverages.getItems().remove(order.getBeverage());
+        }
+        confirmable = false;
+        this.order = new Order();
+        this.init();
+        listBeverages.getSelectionModel().clearSelection();
+        this.updateOrder(null);
+    }
+
     //Bind to button to check DB if it has enough resources. Then proceed to confirmation or print error
     @FXML
     private void preConfirmOrder(ActionEvent event) throws IOException {
@@ -158,12 +185,6 @@ public class OrderController implements Initializable {
         } else {
             errorLabel.setText("Can't confirm invalid order.");
         }
-    }
-
-    public int chopQuantity() {
-        String val = StringUtils.chop(choiceQuantity.getValue());
-        val = StringUtils.chop(val);
-        return Integer.parseInt(val);
     }
 
     public void updateOrder(Beverage beverage) {
@@ -194,6 +215,12 @@ public class OrderController implements Initializable {
         this.lblPrice.setText(String.valueOf(this.order.getPrice()));
     }
 
+    public int chopQuantity() {
+        String val = StringUtils.chop(choiceQuantity.getValue());
+        val = StringUtils.chop(val);
+        return Integer.parseInt(val);
+    }
+
     public void setCupSelection(boolean personalCup) {
         if (personalCup) {
             checkboxCup.setSelected(true);
@@ -202,21 +229,5 @@ public class OrderController implements Initializable {
             checkboxCup.setSelected(false);
             lblCup.setText("Cup included.");
         }
-    }
-
-    private void init() {
-        choiceQuantity.setValue("35cl");
-        this.order.setBeverage_quantity(35);
-        this.setCupSelection(true);
-        sliderSugar.setValue(0);
-        lblSugar.setText("0g");
-    }
-
-    public void reset() {
-        confirmable = false;
-        this.order = new Order();
-        this.init();
-        listBeverages.getSelectionModel().clearSelection();
-        this.updateOrder(null);
     }
 }
