@@ -1,0 +1,38 @@
+Index: README.md
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Drinked, THE way to drink.\n\n### Database Setup\nHere we is the procedure to follow in order to install the database. All commands are meant to be run in bash.\n\n<ol>\n    <li>You must log in your mysql server using \"mysql -u username -p\".</li>\n    <li>You will then create the database: \"CREATE DATABASE drinked;\".</li>\n    <li>Then you log off from mysql and you go into the directory containing \"drinked.sql\".</li>\n    <li>Once you are in the right directory, you will execute this command: \"mysql -u root -p drinked < drinked.sql\".</li>\n</ol>\nYou have now imported successfully the drinked database, with already existing examples in it.\n\n##### Now to get your drinkedDB to work:\n\n<ol>\n    <li>You will find in src/main/resources/fr/drinked/config/ the config.properties.example file.</li>\n    <li>You will copy paste it in the same directory and rename it to \"config.properties\".</li>\n    <li>You will then enter your database (mysql) username and password.</li>\n    <li>As it is in a conf.properties file which was gitignored, it will never be on git, so you can safely enter your \n        credentials, this is a simple trick to secure the application.</li>\n</ol>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/README.md b/README.md
+--- a/README.md	(revision d83b2aebfdec045421836b9fb71456ee2b4204a5)
++++ b/README.md	(date 1643304580471)
+@@ -1,7 +1,7 @@
+ # Drinked, THE way to drink.
+ 
+ ### Database Setup
+-Here we is the procedure to follow in order to install the database. All commands are meant to be run in bash.
++Here we have the procedure to follow in order to install the database. All commands are meant to be run in bash.
+ 
+ <ol>
+     <li>You must log in your mysql server using "mysql -u username -p".</li>
+Index: src/main/java/fr/drinked/tests/TestOrder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package fr.drinked.tests;\n\nimport fr.drinked.App;\nimport fr.drinked.models.Beverage;\nimport fr.drinked.models.Order;\nimport fr.drinked.utils.Logger;\nimport org.mockito.Mockito;\n\nimport java.util.HashMap;\n\npublic class TestOrder {\n\n    private Beverage beverage = new Beverage();\n    private Beverage beverage2 = new Beverage();\n    private Order awaitedModify = new Order(beverage2, 35, 5, \"Cup 35cl\", 0.8f, \"Canceled\");\n    private boolean toReturn = true;\n    private final int backupSizeOrderDAO = App.getInstance().getOrderDAO().getAll().size();;\n    private final int backupSizeBeverageDAO = App.getInstance().getBeverageDAO().getAll().size();\n\n    public boolean run() {\n        // INSERT\n        App.getInstance().getBeverageDAO().save(beverage);\n        Order order = new Order(beverage, 75, 15, \"Personnal Cup\", 1.2f, \"Validated\");\n        App.getInstance().getOrderDAO().save(order);\n        Order orderTest1 = App.getInstance().getOrderDAO().findById(order.getId());\n        if (order.compare(orderTest1) && (backupSizeOrderDAO + 1 == App.getInstance().getOrderDAO().getAll().size())) {\n            Logger.fine(\"OrderDAO Insert fine\");\n        } else {\n            Logger.severe(\"OrderDAO Insert failed\");\n            toReturn = false;\n        }\n\n        // MODIFY\n        HashMap<String, Object> criteria = new HashMap<>();\n        criteria.put(\"beverage_id\", beverage.getId());\n        Order orderTest2 = App.getInstance().getOrderDAO().find(criteria);\n        App.getInstance().getBeverageDAO().save(beverage2);\n        orderTest2.setBeverage(beverage2);\n        orderTest2.setBeverage_quantity(35);\n        orderTest2.setSugar_quantity(5);\n        orderTest2.setCup_selection(\"Cup 35cl\");\n        orderTest2.setPrice(0.8f);\n        orderTest2.setValidity(\"Canceled\");\n        App.getInstance().getOrderDAO().save(orderTest2);\n\n        HashMap<String, Object> criteriaTest = new HashMap<>();\n        criteriaTest.put(\"beverage_id\", beverage2.getId());\n        Order orderTest3 = App.getInstance().getOrderDAO().find(criteriaTest);\n        if (orderTest3.compare(orderTest2) && orderTest3.compare(awaitedModify)) {\n            Logger.fine(\"OrderDAO Modify fine\");\n        } else {\n            Logger.severe(\"OrderDAO Modify failed\");\n            toReturn = false;\n        }\n\n        // REMOVE\n        App.getInstance().getOrderDAO().delete(order);\n        App.getInstance().getOrderDAO().delete(orderTest2);\n        App.getInstance().getBeverageDAO().delete(beverage);\n        App.getInstance().getBeverageDAO().delete(beverage2);\n        if (!order.exist() && !orderTest2.exist() && !beverage.exist() && !beverage2.exist()\n                && App.getInstance().getOrderDAO().getAll().size() == backupSizeOrderDAO\n                && App.getInstance().getBeverageDAO().getAll().size() == backupSizeBeverageDAO) {\n            Logger.fine(\"OrderDAO Delete fine\");\n        } else {\n            Logger.severe(\"OrderDAO Delete failed\");\n            toReturn = false;\n        }\n\n        return toReturn;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/fr/drinked/tests/TestOrder.java b/src/main/java/fr/drinked/tests/TestOrder.java
+--- a/src/main/java/fr/drinked/tests/TestOrder.java	(revision d83b2aebfdec045421836b9fb71456ee2b4204a5)
++++ b/src/main/java/fr/drinked/tests/TestOrder.java	(date 1643304580461)
+@@ -4,8 +4,6 @@
+ import fr.drinked.models.Beverage;
+ import fr.drinked.models.Order;
+ import fr.drinked.utils.Logger;
+-import org.mockito.Mockito;
+-
+ import java.util.HashMap;
+ 
+ public class TestOrder {

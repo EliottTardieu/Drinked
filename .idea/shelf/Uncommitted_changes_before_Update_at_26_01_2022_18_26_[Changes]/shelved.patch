@@ -1,0 +1,91 @@
+Index: src/main/java/fr/drinked/models/Beverage.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package fr.drinked.models;\n\nimport fr.drinked.utils.Logger;\nimport lombok.Getter;\nimport lombok.Setter;\n\nimport java.util.HashMap;\n\npublic class Beverage extends Model {\n\n    @Getter @Setter\n    private String name;\n    @Getter @Setter\n    private String description;\n    @Getter @Setter\n    private float price_35;\n    @Getter @Setter\n    private float price_75;\n    @Getter @Setter\n    private int quantity_available;\n\n    public Beverage() { super(); }\n\n    public Beverage(HashMap<String, Object> data){\n        super(data);\n    }\n\n    public Beverage(String name, String description, float price_35, float price_75, int quantity_available) {\n        this.name = name;\n        this.description = description;\n        this.price_35 = price_35;\n        this.price_75 = price_75;\n        this.quantity_available = quantity_available;\n    }\n\n    /**\n     * Hydrate un objet en fonction d'un résult set SQL\n     *\n     * @param data Map associant une colonne a sa valeur\n     */\n    @Override\n    protected void hydrate(HashMap<String, Object> data) {\n        this.setId(integer(data.get(\"id\")));\n        this.setDescription(string(data.get(\"description\")));\n        this.setName(string(data.get(\"name\")));\n        this.setPrice_35(floatNumber(data.get(\"price_35\")));\n        this.setPrice_75(floatNumber(data.get(\"price_75\")));\n        this.setQuantity_available(integer(data.get(\"quantity_available\")));\n    }\n\n    public float getPrice(int quantity) {\n        if (quantity == 35) {\n            return price_35;\n        } else if (quantity == 75) {\n            return price_75;\n        } else {\n            Logger.severe(\"Wrong quantity.\");\n            return 0;\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/fr/drinked/models/Beverage.java b/src/main/java/fr/drinked/models/Beverage.java
+--- a/src/main/java/fr/drinked/models/Beverage.java	(revision 8677b1bc0a9f4ce5d5a41ae666b4936d6f9124f5)
++++ b/src/main/java/fr/drinked/models/Beverage.java	(date 1643216695519)
+@@ -34,7 +34,7 @@
+     }
+ 
+     /**
+-     * Hydrate un objet en fonction d'un résult set SQL
++     * Hydrate un objet en fonction d'un résultat set SQL
+      *
+      * @param data Map associant une colonne a sa valeur
+      */
+Index: src/main/java/fr/drinked/tests/TestOrder.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package fr.drinked.tests;\n\npublic class TestOrder {\n\n    public boolean run() {\n        return true;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/fr/drinked/tests/TestOrder.java b/src/main/java/fr/drinked/tests/TestOrder.java
+--- a/src/main/java/fr/drinked/tests/TestOrder.java	(revision 8677b1bc0a9f4ce5d5a41ae666b4936d6f9124f5)
++++ b/src/main/java/fr/drinked/tests/TestOrder.java	(date 1643217221618)
+@@ -1,8 +1,25 @@
+ package fr.drinked.tests;
+ 
++import fr.drinked.App;
++import fr.drinked.models.Beverage;
++import fr.drinked.models.Order;
++import org.mockito.Mockito;
++
+ public class TestOrder {
+ 
++    Beverage beverage = Mockito.mock(Beverage.class);
++
+     public boolean run() {
++        // INSERT
++        Order order = new Order(beverage, 75, 15, "Personnal Cup", 1.2f, "Validated");
++        App.getInstance().getOrderDAO().save(order);
++        Order orderTest = App.getInstance().getOrderDAO().findById(order.getId());
++        if (order.getBeverage() == orderTest.getBeverage()
++                && order.getBeverage_quantity() == orderTest.getBeverage_quantity()
++                && order.getSugar_quantity() == orderTest.getSugar_quantity()
++                && order.getCup_selection().equals(orderTest.getCup_selection())
++                && order.get)
++
+         return true;
+     }
+ }
+Index: src/main/java/fr/drinked/controllers/OrderController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package fr.drinked.controllers;\n\nimport fr.drinked.App;\nimport fr.drinked.models.Beverage;\nimport fr.drinked.models.Order;\nimport javafx.beans.value.ChangeListener;\nimport javafx.beans.value.ObservableValue;\nimport javafx.collections.FXCollections;\nimport javafx.collections.ObservableList;\nimport javafx.event.ActionEvent;\nimport javafx.fxml.FXML;\nimport javafx.fxml.FXMLLoader;\nimport javafx.fxml.Initializable;\nimport javafx.scene.Node;\nimport javafx.scene.Parent;\nimport javafx.scene.Scene;\nimport javafx.scene.control.*;\nimport javafx.stage.Modality;\nimport javafx.stage.Stage;\nimport javafx.util.Callback;\nimport lombok.Getter;\nimport lombok.Setter;\nimport org.apache.commons.lang3.StringUtils;\n\nimport java.io.IOException;\nimport java.net.URL;\nimport java.text.DecimalFormat;\nimport java.util.Objects;\nimport java.util.ResourceBundle;\n\npublic class OrderController implements Initializable {\n\n    @FXML @Getter\n    private ListView<Beverage> listBeverages;\n    @FXML @Getter\n    private Label errorLabel;\n    @FXML @Getter\n    private Label lblPrice;\n    @FXML @Getter\n    private Label lblSugar;\n    @FXML @Getter\n    private Slider sliderSugar;\n    @FXML @Getter\n    private Label lblCup;\n    @FXML @Getter\n    private CheckBox checkboxCup;\n    @FXML @Getter\n    private ChoiceBox<String> choiceQuantity;\n\n    @Getter @Setter\n    private Order order;\n\n    //TODO Check if quantity available before enable it\n    @Override\n    public void initialize(URL url, ResourceBundle resourceBundle) {\n        this.order = new Order();\n\n        ObservableList<Beverage> obsList = FXCollections.observableArrayList(App.getInstance().getBeverageDAO().getAll());\n        listBeverages.setItems(obsList);\n\n        listBeverages.setCellFactory(new Callback<ListView<Beverage>, ListCell<Beverage>>() {\n            @Override\n            public ListCell<Beverage> call(ListView<Beverage> lv) {\n                return new ListCell<Beverage>() {\n                    @Override\n                    public void updateItem(Beverage item, boolean empty) {\n                        super.updateItem(item, empty);\n                        if (item == null) {\n                            setText(null);\n                        } else {\n                            setText(item.getName());\n                        }\n                    }\n                };\n            }\n        });\n\n        listBeverages.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Beverage>() {\n            @Override\n            public void changed(ObservableValue<? extends Beverage> observable, Beverage oldValue, Beverage newValue) {\n                App.getInstance().getLayoutController().getOrderController().getOrder().setBeverage(newValue);\n                App.getInstance().getLayoutController().getOrderController().calculatePrice(newValue);\n            }\n        });\n\n        choiceQuantity.getItems().add(\"35cl\");\n        choiceQuantity.getItems().add(\"75cl\");\n        choiceQuantity.setValue(\"35cl\");\n        this.order.setBeverage_quantity(35);\n\n        choiceQuantity.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {\n            this.order.setBeverage_quantity(this.chopQuantity());\n            this.calculatePrice(this.order.getBeverage());\n        });\n\n        sliderSugar.setValue(0);\n        lblSugar.setText(\"0\");\n        sliderSugar.valueProperty().addListener((obs, oldVal, newVal) -> {\n            int newValue = (int) (Math.floor(newVal.intValue()/5) * 5);\n            sliderSugar.setValue(newValue);\n            this.order.setSugar_quantity(newValue);\n            lblSugar.setText(newValue + \" g\");\n        });\n\n        checkboxCup.selectedProperty().addListener(new ChangeListener<Boolean>() {\n            @Override\n            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {\n                App.getInstance().getLayoutController().getOrderController().setCupSelection(newValue);\n                App.getInstance().getLayoutController().getOrderController().calculatePrice(App.getInstance().getLayoutController().getOrderController().getOrder().getBeverage());\n            }\n        });\n    }\n\n    //Bind to button to check DB if it has enough resources. Then proceed to confirmation or print error\n    @FXML\n    private void preConfirmOrder(ActionEvent event) throws IOException {\n        Stage stage = new Stage();\n        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource(\"/views/confirmation.fxml\")));\n        stage.setScene(new Scene(root));\n        stage.setTitle(\"My modal window\");\n        stage.initModality(Modality.WINDOW_MODAL);\n        stage.initOwner(((Node)event.getSource()).getScene().getWindow());\n        stage.show();\n    }\n\n    public int chopQuantity() {\n        String val = StringUtils.chop(choiceQuantity.getValue());\n        val = StringUtils.chop(val);\n        return Integer.parseInt(val);\n    }\n\n    public void calculatePrice(Beverage beverage) {\n        DecimalFormat df = new DecimalFormat(\"0.00\");\n        float price = 0;\n        this.order.setCup_selection(Order.getNO_CUP());\n        if (this.chopQuantity() == 35) {\n            price += beverage.getPrice(35);\n            if (checkboxCup.isSelected()) {\n                price -= 0.1f;\n                this.order.setCup_selection(Order.getCUP_35());\n            }\n        } else if (this.chopQuantity() == 75) {\n            price += beverage.getPrice(75);\n            if (checkboxCup.isSelected()) {\n                price -= 0.15f;\n                this.order.setCup_selection(Order.getCUP_75());\n            }\n        }\n        this.order.setPrice(price);\n        this.lblPrice.setText(String.valueOf(price));\n    }\n\n    public void setCupSelection(boolean personalCup) {\n        if (personalCup) {\n            lblCup.setText(\"Cup not included.\");\n        } else {\n            lblCup.setText(\"Cup included.\");\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/fr/drinked/controllers/OrderController.java b/src/main/java/fr/drinked/controllers/OrderController.java
+--- a/src/main/java/fr/drinked/controllers/OrderController.java	(revision 8677b1bc0a9f4ce5d5a41ae666b4936d6f9124f5)
++++ b/src/main/java/fr/drinked/controllers/OrderController.java	(date 1643214214007)
+@@ -130,7 +130,6 @@
+     }
+ 
+     public void calculatePrice(Beverage beverage) {
+-        DecimalFormat df = new DecimalFormat("0.00");
+         float price = 0;
+         this.order.setCup_selection(Order.getNO_CUP());
+         if (this.chopQuantity() == 35) {
+Index: src/main/java/fr/drinked/database/BeverageDAO.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package fr.drinked.database;\n\nimport fr.drinked.models.Beverage;\n\nimport java.util.HashMap;\n\npublic class BeverageDAO extends DAO<Beverage> {\n\n    public BeverageDAO() {\n        super(Beverage.class);\n    }\n\n    /**\n     * Retourne le nom de la table correspondant a l'objet T\n     *\n     * @return Le nom d'une table SQL\n     */\n    @Override\n    protected String tableName() {\n        return \"Beverages\";\n    }\n\n    /**\n     * Retourne une map associant une colonne SQL a sa valeur dans le cas d'un insert\n     *\n     * @param object Objet a mettre a jour\n     * @return Une Map associant une colonne a sa valeur\n     * @see this.insert\n     * @see this.save\n     */\n    @Override\n    protected HashMap<String, Object> getInsertMap(Beverage object) {\n        HashMap<String, Object> insertMap = new HashMap<>();\n        insertMap.put(\"name\", object.getName());\n        insertMap.put(\"description\", object.getDescription());\n        insertMap.put(\"price_35\", object.getPrice_35());\n        insertMap.put(\"price_75\", object.getPrice_75());\n        insertMap.put(\"quantity_available\", object.getQuantity_available());\n        return insertMap;\n    }\n\n    /**\n     * Retourne une map associant une colonne SQL a sa valeur dans le cas d'un update\n     *\n     * @param object Objet a mettre a jour\n     * @return Une Map associant une colonne a sa valeur\n     * @see this.update\n     * @see this.save\n     */\n    @Override\n    protected HashMap<String, Object> getUpdateMap(Beverage object) {\n        HashMap<String, Object> updateMap = new HashMap<>();\n        updateMap.put(\"name\", object.getName());\n        updateMap.put(\"description\", object.getDescription());\n        updateMap.put(\"price_35\", object.getPrice_35());\n        updateMap.put(\"price_75\", object.getPrice_75());\n        updateMap.put(\"quantity_available\", object.getQuantity_available());\n        return updateMap;\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/fr/drinked/database/BeverageDAO.java b/src/main/java/fr/drinked/database/BeverageDAO.java
+--- a/src/main/java/fr/drinked/database/BeverageDAO.java	(revision 8677b1bc0a9f4ce5d5a41ae666b4936d6f9124f5)
++++ b/src/main/java/fr/drinked/database/BeverageDAO.java	(date 1643213113109)
+@@ -1,7 +1,6 @@
+ package fr.drinked.database;
+ 
+ import fr.drinked.models.Beverage;
+-
+ import java.util.HashMap;
+ 
+ public class BeverageDAO extends DAO<Beverage> {
