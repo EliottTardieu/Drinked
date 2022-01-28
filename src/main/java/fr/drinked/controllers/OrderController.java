@@ -103,14 +103,19 @@ public class OrderController implements Initializable {
         choiceQuantity.getItems().add("75cl");
 
         choiceQuantity.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-            if(this.chopQuantity(newValue) > this.order.getBeverage().getQuantity_available()
-                    || App.getInstance().getResourceDAO().findById(1).getQuantity_available() < this.chopQuantity(newValue) * this.order.getBeverage().getWater_percentage()/100) {
-                updateErrorMessage(1, 75);
-                choiceQuantity.getSelectionModel().selectFirst();
-                this.order.setBeverage_quantity(35);
+            if(this.order.getBeverage() != null) {
+                if(this.chopQuantity(newValue) > this.order.getBeverage().getQuantity_available()
+                        || App.getInstance().getResourceDAO().findById(1).getQuantity_available() < this.chopQuantity(newValue) * this.order.getBeverage().getWater_percentage()/100) {
+                    updateErrorMessage(1, 75);
+                    choiceQuantity.getSelectionModel().selectFirst();
+                    this.order.setBeverage_quantity(35);
+                } else {
+                    this.order.setBeverage_quantity(this.chopQuantity(newValue));
+                    this.updateOrder(this.order.getBeverage());
+                }
             } else {
                 this.order.setBeverage_quantity(this.chopQuantity(newValue));
-                this.updateOrder(this.order.getBeverage());
+                this.updateOrder(null);
             }
         });
 
