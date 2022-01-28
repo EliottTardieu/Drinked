@@ -24,6 +24,7 @@ hs_err_pid*
 
 out
 target
+.idea/
 .idea/libraries
 .idea/workspace.xml
 logs

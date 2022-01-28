@@ -3,7 +3,7 @@
 ### Run the .jar file after compiling
 
 To run the application after compiling the source code, you will find in the target/out the jar file.   
-You have to have your source code compiled with your mysql settings set up as said in the "how to get your jdbc Database to work" section for the jar to work.  
+You have to have your source code compiled with your mysql settings set up as said in the "Database Setup" section for the jar to work.  
 You should then open a terminal, and do a java -jar [filename].jar  
 You should now see the application as it would be if compiled from your IDE.  
 If you have any issues please contact eliott.tardieu@etu.univ-tours.fr or guillaume.cazin@etu.univ-tours.fr

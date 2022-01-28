@@ -11,12 +11,12 @@ public class TestOrder {
     private Beverage beverage = new Beverage();
     private Beverage beverage2 = new Beverage();
     private Order awaitedModify = new Order(beverage2, 35, 5, "Cup 35cl", 0.8f, "Canceled");
-    private boolean toReturn = true;
     private final int backupSizeOrderDAO = App.getInstance().getOrderDAO().getAll().size();;
     private final int backupSizeBeverageDAO = App.getInstance().getBeverageDAO().getAll().size();
 
     public boolean run() {
         // INSERT
+        boolean insert = true;
         App.getInstance().getBeverageDAO().save(beverage);
         Order order = new Order(beverage, 75, 15, "Personnal Cup", 1.2f, "Validated");
         App.getInstance().getOrderDAO().save(order);
@@ -25,10 +25,11 @@ public class TestOrder {
             Logger.fine("OrderDAO Insert fine");
         } else {
             Logger.severe("OrderDAO Insert failed");
-            toReturn = false;
+            insert = false;
         }
 
         // MODIFY
+        boolean modify = true;
         HashMap<String, Object> criteria = new HashMap<>();
         criteria.put("beverage_id", beverage.getId());
         Order orderTest2 = App.getInstance().getOrderDAO().find(criteria);
@@ -48,23 +49,29 @@ public class TestOrder {
             Logger.fine("OrderDAO Modify fine");
         } else {
             Logger.severe("OrderDAO Modify failed");
-            toReturn = false;
+            modify = false;
         }
 
-        // REMOVE
+        // DELETE
+        boolean delete = true;
         App.getInstance().getOrderDAO().delete(order);
         App.getInstance().getOrderDAO().delete(orderTest2);
         App.getInstance().getBeverageDAO().delete(beverage);
         App.getInstance().getBeverageDAO().delete(beverage2);
-        if (!order.exist() && !orderTest2.exist() && !beverage.exist() && !beverage2.exist()
-                && App.getInstance().getOrderDAO().getAll().size() == backupSizeOrderDAO
+        if (App.getInstance().getOrderDAO().getAll().size() == backupSizeOrderDAO
                 && App.getInstance().getBeverageDAO().getAll().size() == backupSizeBeverageDAO) {
             Logger.fine("OrderDAO Delete fine");
         } else {
             Logger.severe("OrderDAO Delete failed");
-            toReturn = false;
+            delete = false;
         }
 
-        return toReturn;
+        if(insert && modify && delete) {
+            Logger.fine("OrderDAO test successful");
+            return true;
+        } else {
+            Logger.severe("OrderDAO test failed");
+            return false;
+        }
     }
 }
